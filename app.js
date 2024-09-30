@@ -7,11 +7,11 @@ const app = express() ;
 app.use(express.json());
 app.use(cookieParser());
 
-const customerRoutes = require('./routes/customerRoutes');
-const ownerRoutes = require('./routes/ownerRoutes');
+const userRoutes = require('./routes/userRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
-app.use('/customer', customerRoutes);
-app.use('/owner', ownerRoutes);
+app.use('/user', userRoutes);
+app.use('/admin', adminRoutes);
 
 const connectDB = async ()=>{
     try {

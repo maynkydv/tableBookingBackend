@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
-  const Owner = sequelize.define('Owner', {
-    ownerId: {
+  const User = sequelize.define('User', {
+    userId: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: { //*credential
+    email: {      //*credential
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    password: {  //*credential
+    password: {    //*credential
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -24,27 +24,25 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-
-  },
-    { timestamps: false }
-  );
-
-  async function hashPassword(owner) {
-    if (owner.changed('password')) {
-      const salt = await bcrypt.genSalt(10);
-      owner.password = await bcrypt.hash(owner.password, salt);
+    role:{
+      type:DataTypes.STRING,
+      defaultValue: "customer",
     }
-  }
+  },
+  {timestamps: false}
+);
 
-  Owner.beforeSave(hashPassword);
-  // Owner.beforeCreate(hashPassword);
-  // Owner.beforeUpdate(hashPassword);
-
-  Owner.prototype.validPassword = async function (password) {
+  async function hashPassword(customer) {
+    if (customer.changed('password')) {
+      const salt = await bcrypt.genSalt(10);
+      customer.password = await bcrypt.hash(customer.password, salt);
+    }
+  } 
+  User.beforeSave(hashPassword);
+  
+  User.prototype.validPassword = async function(password) {
     return bcrypt.compare(password, this.password);
   };
 
-  return Owner;
+  return User ;
 }
-
-
