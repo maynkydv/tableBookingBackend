@@ -1,10 +1,7 @@
 const { Booking, Restaurant_Owner , Restaurant} = require('../models');
 const { Op } = require('sequelize');
 
-
-
-
-// *  get  'user/booking' , authenticate, customerAuth 
+// *  get  'user/booking' , authenticate  
 exports.getBookingOfUser = async (req, res) => {
   try {
     const userId = req.user.userId; 
@@ -31,7 +28,7 @@ exports.getBookingOfUser = async (req, res) => {
 };
 
 
-// *  post  'user/booking' , authenticate, customerAuth 
+// *  post  'user/booking' , authenticate 
 exports.bookTable = async (req, res) => {
   try {
     const { restaurantId, date, startTime, endTime, guestCount } = req.body;
@@ -63,13 +60,13 @@ exports.bookTable = async (req, res) => {
   }
 };
 
-// *  delete  'user/booking' , authenticate, customerAuth 
+// *  delete  'user/booking' , authenticate 
 exports.deleteBooking = async (req, res) => {
   try {
-    const customerId = req.user.customerId;
+    const userId = req.user.userId;
     const { bookingId } = req.body;
 
-    const booking = await Booking.findOne({ where: { bookingId, customerId } });
+    const booking = await Booking.findOne({ where: { bookingId, userId } });
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found or doesn't belong to the customer." });
@@ -86,6 +83,28 @@ exports.deleteBooking = async (req, res) => {
   }
 };
 
+// * get 'user/restaurant/bookings',    authenticate 
+exports.getBookingOfRestaurant = async (req, res) => {
+  try {
+    const { restaurantId } = req.body;
+
+    const bookings = await Booking.findAll({
+      where: {
+        restaurantId: restaurantId
+      }
+    });
+
+    res.status(200).json({success: true, bookings});
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+
+
+//---------------------------------------*----------------------------
 async function checkTableAvailability (rest_id, date, startTime, endTime) {
   try {
     const restaurant = await Restaurant.findOne({
@@ -135,33 +154,3 @@ async function checkTableAvailability (rest_id, date, startTime, endTime) {
 };
 
 
-
-
-// * get 'owner/restaurant/bookings',    authenticate, ownerAuth,
-// exports.getBookingOfRestaurant = async (req, res) => {
-//   try {
-//     const { restaurantId } = req.body;
-//     const ownerId = req.user.ownerId;
-
-//     const ownership = await Restaurant_Owner.findOne({
-//       where: {
-//         RestaurantId: restaurantId,
-//         OwnerId: ownerId
-//       }
-//     });
-
-//     if (!ownership) {
-//       return res.status(403).json({ message: 'Unauthorized' });
-//     }
-
-//     const bookings = await Booking.findAll({
-//       where: {
-//         restaurantId: restaurantId
-//       }
-//     });
-
-//     res.status(200).json({success: true, bookings});
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };

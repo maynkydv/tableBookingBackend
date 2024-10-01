@@ -3,6 +3,7 @@ const router = express.Router();
 const authenticate = require('../middlewares/authenticate');
 const userController  = require('../controllers/userController');
 const bookingController  = require('../controllers/bookingController');
+const restaurantController  = require('../controllers/restaurantController');
 
 
 router.post('/register', userController.createUser);
@@ -17,7 +18,10 @@ router.delete('/',authenticate , userController.deleteUser);
 router.post('/booking' , authenticate, bookingController.bookTable );
 // router.delete('/booking' , authenticate, bookingController.deleteBooking );
 
-// //Restaurant Related
-// router.get('/restaurants' , authenticate, bookingController.getBookingOfUser );
+// Restaurant
+router.get('/restaurant' , restaurantController.getAllRestaurant );
+
+
+
 
 module.exports = router;

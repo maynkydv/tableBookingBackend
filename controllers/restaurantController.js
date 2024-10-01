@@ -3,27 +3,19 @@ const { Restaurant, Restaurant_Owner, User } = require('../models');
 // * post 'admin/restaurant'  , authenticate, adminAuth
 exports.addRestaurant = async (req, res) => {
   try {
-    const ownerId = req.body.ownerId;
+    const userId = req.body.userId;
 
-    const owner = await User.findByPk(ownerId);
-    if (!owner) {
-      res.status(403).json({ message: `User with userId ${ownerId} doesn't exist` });
+    const user = await User.findByPk(userId);
+    if (!user) {
+      res.status(403).json({ message: `User with userId ${userId} doesn't exist` });
     }
 
     const restaurant = await Restaurant.create(req.body);
 
     await Restaurant_Owner.create({
       RestaurantRestaurantId: restaurant.restaurantId,
-      UserUserId: ownerId
+      UserUserId: userId
     });
-
-    if (owner.role == 'customer') {
-      const updatedUser = owner;
-      updatedUser.role = 'owner';
-      owner.set(updatedUser);
-      await owner.save();
-    }
-
 
     res.status(201).json({ success: true, restaurant });
   } catch (error) {
@@ -44,7 +36,7 @@ exports.updateRestaurant = async (req, res) => {
       const updatedDetails = req.body;
       restaurant.set(updatedDetails);
       await restaurant.save;
-      res.status(200).json(user);
+      res.status(200).json(restaurant);
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -121,7 +113,7 @@ exports.removeRestaurant = async (req, res) => {
   }
 };
 
-// * delete 'owner/restaurant/delete'  , authenticate, adminAuth
+// * delete 'user/restaurant/delete'  , authenticate, adminAuth
 exports.deleteRestaurant = async (req, res) => {
   try {
 
@@ -145,25 +137,16 @@ exports.deleteRestaurant = async (req, res) => {
 
 
 
-// TODO : need to work on relationship
-// // * get 'admin/restaurant/:id'  , authenticate, ownerAuth
-// exports.getRestaurantDetails = async (req, res) => {
-//   try {
-//     const restaurantId = req.param.id;
-//     const owners = await Owner.findAll({
-//       include: [
-//         {
-//           model: Restaurant_Owner,
-//           where: { RestaurantRestaurantId: restaurantId },
-//           attributes: []
-//         }
-//       ]
-//     });
-//     if (owners.length === 0) {
-//       return res.status(404).json({ message: 'No owners found for this restaurant' });
-//     }
-//     res.status(200).json(owners);
-//   } catch (error) {
-//     res.status(500).json({ msg: 'this here', error: error.message });
-//   }
-// };
+
+// * get 'user/restaurant'  
+exports.getAllRestaurant = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findAll({});
+    if (!restaurant) {
+      return res.status(404).json({ message: 'No Restaurants are Found' });
+    }
+    res.status(200).json(restaurant);
+  } catch (error) {
+    res.status(500).json({ msg: 'this here', error: error.message });
+  }
+};
