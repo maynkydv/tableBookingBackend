@@ -3,7 +3,7 @@ const { Restaurant, Restaurant_Owner, User } = require('../models');
 // * post 'admin/restaurant'  , authenticate, adminAuth
 exports.addRestaurant = async (req, res) => {
   try {
-    const userId = req.body.userId;
+    const { userId } = req.body;
     console.log(req.body);
 
     const user = await User.findByPk(userId);
@@ -23,13 +23,13 @@ exports.addRestaurant = async (req, res) => {
       console.log({
         restaurantId: restaurant.restaurantId,
         restaurantName: restaurant.name,
-        userId: userId,
+        userId,
         userName: user.name,
       });
       await Restaurant_Owner.create({
         restaurantId: restaurant.restaurantId,
         restaurantName: restaurant.name,
-        userId: userId,
+        userId,
         userName: user.name,
       });
     } catch (error) {
@@ -45,7 +45,7 @@ exports.addRestaurant = async (req, res) => {
 
 // * put 'admin/restaurant'  , authenticate, adminAuth
 exports.updateRestaurant = async (req, res) => {
-  const restaurantId = req.body.restaurantId;
+  const { restaurantId } = req.body;
   try {
     const restaurant = await Restaurant.findByPk(restaurantId);
 
@@ -57,21 +57,20 @@ exports.updateRestaurant = async (req, res) => {
     restaurant.set(updatedDetails);
     await restaurant.save();
     res.status(200).json(restaurant);
-
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// * post  'admin/restaurant/addowner'   authenticate, adminAuth, 
+// * post  'admin/restaurant/addowner'   authenticate, adminAuth,
 exports.addOwnerToRestaurant = async (req, res) => {
   try {
     const { restaurantId, newOwnerId } = req.body;
 
     const restaurant = await Restaurant.findOne({
       where: {
-        restaurantId: restaurantId
-      }
+        restaurantId,
+      },
     });
 
     if (!restaurant) {
@@ -87,7 +86,7 @@ exports.addOwnerToRestaurant = async (req, res) => {
       where: {
         restaurantId: restaurant.restaurantId,
         userId: newOwner.userId,
-      }
+      },
     });
     if (existingOwnership) {
       return res.status(400).json({ message: 'This owner is already associated with the restaurant' });
@@ -96,7 +95,7 @@ exports.addOwnerToRestaurant = async (req, res) => {
       restaurantId: restaurant.restaurantId,
       restaurantName: restaurant.name,
       userId: newOwner.userId,
-      userName: newOwner.name
+      userName: newOwner.name,
     });
     // if (newOwner.role == 'customer') {
     //   const updatedUser = newOwner;
@@ -106,7 +105,7 @@ exports.addOwnerToRestaurant = async (req, res) => {
     // }
     res.status(201).json({
       success: true,
-      message: `Owner with ID ${newOwnerId} has been added to the Owner list of restaurant with restaurantId ${restaurantId}`
+      message: `Owner with ID ${newOwnerId} has been added to the Owner list of restaurant with restaurantId ${restaurantId}`,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -120,9 +119,9 @@ exports.removeRestaurant = async (req, res) => {
 
     const deleted = await Restaurant_Owner.destroy({
       where: {
-        restaurantId: restaurantId,
+        restaurantId,
         userId: ownerId,
-      }
+      },
     });
 
     if (deleted) {
@@ -138,18 +137,16 @@ exports.removeRestaurant = async (req, res) => {
 // * delete 'user/restaurant/delete'  , authenticate, adminAuth
 exports.deleteRestaurant = async (req, res) => {
   try {
-
     const { restaurantId } = req.body;
 
     const deleted = await Restaurant.destroy({
       where: {
-        restaurantId: restaurantId
-      }
+        restaurantId,
+      },
     });
     if (!deleted) {
-      res.status(404).json({ message: `Restaurant Deletion Unsuccessful` })
-    }
-    else {
+      res.status(404).json({ message: 'Restaurant Deletion Unsuccessful' });
+    } else {
       res.status(200).json({ message: 'Restaurant deleted successfully' });
     }
   } catch (error) {
@@ -157,10 +154,7 @@ exports.deleteRestaurant = async (req, res) => {
   }
 };
 
-
-
-
-// * get 'user/restaurant'  
+// * get 'user/restaurant'
 exports.getAllRestaurant = async (req, res) => {
   try {
     const restaurant = await Restaurant.findAll({});

@@ -1,10 +1,10 @@
-const { Booking, Restaurant_Owner, Restaurant } = require('../models');
 const { Op } = require('sequelize');
+const { Booking, Restaurant } = require('../models');
 
-// *  get  'user/booking' , authenticate  
+// *  get  'user/booking' , authenticate
 exports.getBookingOfUser = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const { userId } = req.user;
 
     const bookings = await Booking.findAll({
       where: { userId },
@@ -12,27 +12,28 @@ exports.getBookingOfUser = async (req, res) => {
         {
           model: Restaurant,
           as: 'Restaurant',
-          attributes: ['name', 'location']
-        }
-      ]
+          attributes: ['name', 'location'],
+        },
+      ],
     });
 
     if (!bookings.length) {
-      return res.status(404).json({ message: "No bookings found for this customer." });
+      return res.status(404).json({ message: 'No bookings found for this customer.' });
     }
 
-    res.status(200).json({ success: true, bookings });
+    return res.status(200).json({ success: true, bookings });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
-
-// *  post  'user/booking' , authenticate 
+// *  post  'user/booking' , authenticate
 exports.bookTable = async (req, res) => {
   try {
-    const { restaurantId, restaurantName, userName, date, startTime, endTime, guestCount } = req.body;
-    const userId = req.user.userId;
+    const {
+      restaurantId, restaurantName, userName, date, startTime, endTime, guestCount,
+    } = req.body;
+    const { userId } = req.user;
 
     const availableTable = await checkTableAvailability(restaurantId, date, startTime, endTime);
 
@@ -49,23 +50,23 @@ exports.bookTable = async (req, res) => {
       date,
       startTime,
       endTime,
-      guestCount
+      guestCount,
     });
 
     res.status(201).json({
       success: true,
       message: 'Booking created successfully',
-      booking
+      booking,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// *  delete  'user/booking' , authenticate 
+// *  delete  'user/booking' , authenticate
 exports.deleteBooking = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const { userId } = req.user;
     const { bookingId } = req.body;
 
     const booking = await Booking.findOne({ where: { bookingId, userId } });
@@ -78,22 +79,22 @@ exports.deleteBooking = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Booking deleted successfully'
+      message: 'Booking deleted successfully',
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// * get 'user/restaurant/bookings',    authenticate 
+// * get 'user/restaurant/bookings',    authenticate
 exports.getBookingOfRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.body;
 
     const bookings = await Booking.findAll({
       where: {
-        restaurantId: restaurantId
-      }
+        restaurantId,
+      },
     });
 
     res.status(200).json({ success: true, bookings });
@@ -102,14 +103,13 @@ exports.getBookingOfRestaurant = async (req, res) => {
   }
 };
 
-
-
-//---------------------------------------*----------------------------
+// ---------------------------------------*----------------------------
+// function to check the Table Availability
 async function checkTableAvailability(rest_id, date, requestedStartTime, requestedEndTime) {
   try {
     const restaurant = await Restaurant.findOne({
       where: { restaurantId: rest_id },
-      attributes: ['tableCount']
+      attributes: ['tableCount'],
     });
 
     if (!restaurant) {
@@ -121,29 +121,29 @@ async function checkTableAvailability(rest_id, date, requestedStartTime, request
     const bookedTables = await Booking.findAll({
       where: {
         restaurantId: rest_id,
-        date: date,
+        date,
         [Op.or]: [
           {
             startTime: {
-              [Op.between]: [requestedStartTime, requestedEndTime]
-            }
+              [Op.between]: [requestedStartTime, requestedEndTime],
+            },
           },
           {
             endTime: {
-              [Op.between]: [requestedStartTime, requestedEndTime]
-            }
+              [Op.between]: [requestedStartTime, requestedEndTime],
+            },
           },
           {
             [Op.and]: [
               { startTime: { [Op.lt]: requestedEndTime } },
-              { endTime: { [Op.gt]: requestedStartTime } }
-            ]
-          }
-        ]
+              { endTime: { [Op.gt]: requestedStartTime } },
+            ],
+          },
+        ],
       },
-      attributes: ['tableNumber']
+      attributes: ['tableNumber'],
     });
-    const bookedTableNumbers = bookedTables.map(booking => booking.tableNumber);
+    const bookedTableNumbers = bookedTables.map((booking) => { return booking.tableNumber; });
 
     for (let i = 1; i <= totalTables; i++) {
       if (!bookedTableNumbers.includes(i)) {
@@ -155,6 +155,4 @@ async function checkTableAvailability(rest_id, date, requestedStartTime, request
     console.log(error);
     return ('Error checking table availability', error);
   }
-};
-
-
+}

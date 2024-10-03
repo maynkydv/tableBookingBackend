@@ -3,30 +3,30 @@ module.exports = (sequelize, DataTypes) => {
     uniqueId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     restaurantId: {
       type: DataTypes.INTEGER,
       references: {
         model: 'Restaurants',
-        key: 'restaurantId'
-      }
+        key: 'restaurantId',
+      },
     },
     restaurantName: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     userId: {
       type: DataTypes.INTEGER,
       references: {
         model: 'Users',
-        key: 'userId'
-      }
+        key: 'userId',
+      },
     },
     userName: {
-      type: DataTypes.STRING
-    }
+      type: DataTypes.STRING,
+    },
   }, {
-    timestamps: false 
+    timestamps: false,
   });
   return Restaurant_Owner;
-}
+};

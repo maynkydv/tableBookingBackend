@@ -1,23 +1,22 @@
 const { verifyToken } = require('../utils/token');
 
 const authenticate = async (req, res, next) => {
-  
-  const token = req.cookies.tokenId;  
+  const token = req.cookies.tokenId;
 
   if (!token) {
     return res.status(401).json({
-      err:"Unauthorized - Token not found",
-      msg:"Please Login First"
+      err: 'Unauthorized - Token not found',
+      msg: 'Please Login First',
     });
   }
 
   try {
     const data = await verifyToken(token);
-    console.log("The data from token is ", data);
+    console.log('The data from token is ', data);
     req.user = data;
-    next(); 
+    next();
   } catch (error) {
-    console.log("Unauthenticated Request")
+    console.log('Unauthenticated Request');
     res.status(401).json({ message: error.message });
   }
 };
