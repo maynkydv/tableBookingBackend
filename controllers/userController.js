@@ -64,7 +64,7 @@ exports.updateUser = async (req, res) => {
   try {
     const user = await User.findByPk(userId);
     const updatedUser = req.body ;
-    updatedUser.role = user.role ;
+    updatedUser.role = user.role ; // ensure that role doesnot got changed
     if (user) {
       user.set(updatedUser); 
       await user.save();

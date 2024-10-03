@@ -37,8 +37,8 @@ exports.addRestaurant = async (req, res) => {
 
 // * put 'admin/restaurant'  , authenticate, adminAuth
 exports.updateRestaurant = async (req, res) => {
+  const restaurantId = req.body.restaurantId;
   try {
-    const restaurantId = req.body.restaurantId;
     const restaurant = await Restaurant.findByPk(restaurantId);
 
     if (!restaurant) {
@@ -47,7 +47,7 @@ exports.updateRestaurant = async (req, res) => {
 
     const updatedDetails = req.body;
     restaurant.set(updatedDetails);
-    await restaurant.save;
+    await restaurant.save();
     res.status(200).json(restaurant);
 
   } catch (error) {
