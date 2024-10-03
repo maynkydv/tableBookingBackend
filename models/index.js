@@ -25,8 +25,20 @@ db.Booking.belongsTo(db.User, { foreignKey: 'userId' });
 db.Restaurant.hasMany(db.Booking, { foreignKey: 'restaurantId' });
 db.Booking.belongsTo(db.Restaurant, { foreignKey: 'restaurantId' });
 
-db.Restaurant.belongsToMany(db.User, { through: "Restaurant_Owner" });
-db.User.belongsToMany(db.Restaurant, { through: "Restaurant_Owner" });
+// db.Restaurant.belongsToMany(db.User, { through: "Restaurant_Owner" });
+db.Restaurant.belongsToMany(db.User, { 
+    through: 'Restaurant_Owner', 
+    foreignKey: 'restaurantId', 
+    otherKey: 'userId',         
+    as: 'Users'                
+});
+// db.User.belongsToMany(db.Restaurant, { through: "Restaurant_Owner" });
+db.User.belongsToMany(db.Restaurant, { 
+  through: 'Restaurant_Owner', 
+  foreignKey: 'userId',       
+  otherKey: 'restaurantId',   
+  as: 'Restaurants'          
+});
 
 
 module.exports = db;

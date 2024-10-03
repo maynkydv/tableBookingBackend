@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    mobile: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: "customer",
+    },
     email: {      //*credential
       type: DataTypes.STRING,
       allowNull: false,
@@ -19,30 +27,22 @@ module.exports = (sequelize, DataTypes) => {
     password: {    //*credential
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    mobile: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    role:{
-      type:DataTypes.STRING,
-      defaultValue: "customer",
     }
   },
-  {timestamps: false}
-);
+    { timestamps: false }
+  );
 
   async function hashPassword(customer) {
     if (customer.changed('password')) {
       const salt = await bcrypt.genSalt(10);
       customer.password = await bcrypt.hash(customer.password, salt);
     }
-  } 
+  }
   User.beforeSave(hashPassword);
-  
-  User.prototype.validPassword = async function(password) {
+
+  User.prototype.validPassword = async function (password) {
     return bcrypt.compare(password, this.password);
   };
 
-  return User ;
+  return User;
 }

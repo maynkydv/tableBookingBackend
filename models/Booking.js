@@ -9,6 +9,26 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    restaurantId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Restaurants',
+        key: 'restaurantId'
+      }
+    },
+    restaurantName: {
+      type: DataTypes.STRING,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'userId'
+      }
+    },
+    userName: {
+      type: DataTypes.STRING,
+    },
     guestCount: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -26,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
   },
-  {timestamps: false}
-);
-  return Booking ;
+    { timestamps: false }
+  );
+  return Booking;
 }

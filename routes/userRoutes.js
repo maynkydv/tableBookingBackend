@@ -14,14 +14,12 @@ router.put('/' , authenticate  , userController.updateUser);
 router.delete('/',authenticate , userController.deleteUser);
 
 // Booking
-// router.get('/booking' , authenticate, bookingController.getBookingOfUser );
+router.get('/booking' , authenticate, bookingController.getBookingOfUser );
 router.post('/booking' , authenticate, bookingController.bookTable );
 // router.delete('/booking' , authenticate, bookingController.deleteBooking );
 
 // Restaurant
 router.get('/restaurant' , restaurantController.getAllRestaurant );
-
-
 
 
 module.exports = router;

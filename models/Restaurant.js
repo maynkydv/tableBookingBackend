@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, DataTypes) => {
   const Restaurant = sequelize.define('Restaurant', {
     restaurantId: {

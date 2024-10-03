@@ -11,11 +11,23 @@ exports.addRestaurant = async (req, res) => {
     }
 
     const restaurant = await Restaurant.create(req.body);
-
-    await Restaurant_Owner.create({
-      RestaurantRestaurantId: restaurant.restaurantId,
-      UserUserId: userId
-    });
+    try {
+      console.log({
+        restaurantId: restaurant.restaurantId,
+        restaurantName: restaurant.name,
+        userId: userId,
+        userName: user.name,
+      });
+      await Restaurant_Owner.create({
+        restaurantId: restaurant.restaurantId,
+        restaurantName: restaurant.name,
+        userId: userId,
+        userName: user.name,
+      });
+    } catch (error) {
+      console.error('Error creating Restaurant_Owner:', error);
+      return res.status(400).json({ error: 'Failed to create restaurant owner relationship.' });
+    }
 
     res.status(201).json({ success: true, restaurant });
   } catch (error) {
@@ -32,12 +44,12 @@ exports.updateRestaurant = async (req, res) => {
     if (!restaurant) {
       return res.status(404).json({ message: `Unable to Find Restaurant with restaurantId ${restaurantId}` });
     }
-    else {
-      const updatedDetails = req.body;
-      restaurant.set(updatedDetails);
-      await restaurant.save;
-      res.status(200).json(restaurant);
-    }
+
+    const updatedDetails = req.body;
+    restaurant.set(updatedDetails);
+    await restaurant.save;
+    res.status(200).json(restaurant);
+
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -65,23 +77,25 @@ exports.addOwnerToRestaurant = async (req, res) => {
 
     const existingOwnership = await Restaurant_Owner.findOne({
       where: {
-        RestaurantRestaurantId: restaurantId,
-        UserUserId: newOwnerId
+        restaurantId: restaurant.restaurantId,
+        userId: newOwner.userId,
       }
     });
     if (existingOwnership) {
       return res.status(400).json({ message: 'This owner is already associated with the restaurant' });
     }
     await Restaurant_Owner.create({
-      RestaurantRestaurantId: restaurantId,
-      UserUserId: newOwnerId
+      restaurantId: restaurant.restaurantId,
+      restaurantName: restaurant.name,
+      userId: newOwner.userId,
+      userName: newOwner.name
     });
-    if (newOwner.role == 'customer') {
-      const updatedUser = newOwner;
-      updatedUser.role = 'owner';
-      newOwner.set(updatedUser);
-      await newOwner.save();
-    }
+    // if (newOwner.role == 'customer') {
+    //   const updatedUser = newOwner;
+    //   updatedUser.role = 'owner';
+    //   newOwner.set(updatedUser);
+    //   await newOwner.save();
+    // }
     res.status(201).json({
       success: true,
       message: `Owner with ID ${newOwnerId} has been added to the Owner list of restaurant with restaurantId ${restaurantId}`
@@ -98,8 +112,8 @@ exports.removeRestaurant = async (req, res) => {
 
     const deleted = await Restaurant_Owner.destroy({
       where: {
-        RestaurantRestaurantId: restaurantId,
-        UserUserId: ownerId
+        restaurantId: restaurantId,
+        userId: ownerId,
       }
     });
 

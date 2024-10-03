@@ -14,7 +14,7 @@ router.put('/define',authenticate , adminController.defineAdmin);
 
 // Restaurant Related
 router.post('/restaurant',authenticate, adminAuth, restaurantController.addRestaurant);
-// router.put('/restaurant',authenticate, adminAuth, restaurantController.updateRestaurant);
+router.put('/restaurant',authenticate, adminAuth, restaurantController.updateRestaurant);
 
 router.post('/restaurant/addowner' ,authenticate, adminAuth, restaurantController.addOwnerToRestaurant ) ;
 // router.delete('/restaurant/remove',authenticate, adminAuth, restaurantController.removeRestaurant); // remove ownership of user form this restaurant 
