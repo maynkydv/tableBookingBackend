@@ -26,7 +26,7 @@ exports.login = async (req,res) =>{
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    const token = await generateToken({ userId: user.userId, role:user.role, email : user.email });
+    const token = await generateToken({ userId: user.userId, role:user.role, email : user.email, name : user.name });
 
     res.cookie('tokenId',token);
     res.status(200).json({success:true,message:"Successfully logged in",jwtToken:token});

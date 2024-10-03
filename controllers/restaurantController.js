@@ -4,13 +4,21 @@ const { Restaurant, Restaurant_Owner, User } = require('../models');
 exports.addRestaurant = async (req, res) => {
   try {
     const userId = req.body.userId;
+    console.log(req.body);
 
     const user = await User.findByPk(userId);
     if (!user) {
-      res.status(403).json({ message: `User with userId ${userId} doesn't exist` });
+      return res.status(403).json({ message: `User with userId ${userId} doesn't exist` });
     }
 
     const restaurant = await Restaurant.create(req.body);
+    // console.log(restaurant);
+    // console.log({
+    //   restaurantId: restaurant.restaurantId,
+    //   restaurantName: restaurant.name,
+    //   userId: userId,
+    //   userName: user.name,
+    // });
     try {
       console.log({
         restaurantId: restaurant.restaurantId,
@@ -31,7 +39,7 @@ exports.addRestaurant = async (req, res) => {
 
     res.status(201).json({ success: true, restaurant });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message });
   }
 };
 

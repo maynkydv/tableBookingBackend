@@ -11,6 +11,8 @@ const adminController = require('../controllers/adminController');
 // Become Admin 
 router.put('/define',authenticate , adminController.defineAdmin);
 
+// fetch all User 
+router.get('/users',authenticate ,adminAuth , adminController.getAllUsers);
 
 // Restaurant Related
 router.post('/restaurant',authenticate, adminAuth, restaurantController.addRestaurant);
