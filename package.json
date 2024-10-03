@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
-    "lint": "eslint 'controllers/*.js' 'middlewares/*.js' 'models/*.js' 'routes/*.js' '*.js' ",
-    "lint-f": "eslint 'controllers/*.js' 'middlewares/*.js' 'models/*.js' 'routes/*.js' '*.js' --fix"
+    "lint": "eslint *.js ",
+    "lint-f": "eslint *.js --fix"
   },
   "author": "",
   "license": "ISC",
@@ -29,3 +29,4 @@
     "sequelize": "^6.37.3"
   }
 }
+

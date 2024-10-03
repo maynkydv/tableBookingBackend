@@ -86,10 +86,10 @@ exports.deleteBooking = async (req, res) => {
   }
 };
 
-// * get 'user/restaurant/bookings',    authenticate
+// * get 'admin/restaurant/:id/bookings',    authenticate
 exports.getBookingOfRestaurant = async (req, res) => {
   try {
-    const { restaurantId } = req.body;
+    const  restaurantId  = req.params.id;
 
     const bookings = await Booking.findAll({
       where: {

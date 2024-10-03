@@ -23,7 +23,7 @@ router.post('/restaurant/addowner', authenticate, adminAuth, restaurantControlle
 router.delete('/restaurant/delete', authenticate, adminAuth, restaurantController.deleteRestaurant);
 
 // Booking Related
-router.get('/restaurant/bookings', authenticate, adminAuth, bookingController.getBookingOfRestaurant);
+router.get('/restaurant/:id/bookings', authenticate, adminAuth, bookingController.getBookingOfRestaurant);
 
 // router.get('/restaurant/:id',authenticate, adminAuth,restaurantController.getRestaurantDetails);
 
