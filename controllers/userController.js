@@ -6,7 +6,13 @@ exports.createUser = async (req, res) => {
   try {
     const user = await User.create(req.body);
     user.role = 'customer';
-    res.status(201).json(user);
+
+    const token = await generateToken({
+      userId: user.userId, role: user.role, email: user.email, name: user.name,
+    });
+
+    res.cookie('tokenId', token);
+    res.status(201).json({ success: true, user: user, jwtToken: token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
